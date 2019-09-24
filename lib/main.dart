@@ -60,6 +60,9 @@ class MyHomePage extends State<StatefulBuild> {
   double num1 = 0.0;
   double num2 = 0.0;
   String operand = "";
+  double textSize = 5.0;
+  int dotDectecher = 0;
+  GlobalKey outPutBox = GlobalKey();
 
   void buttonPressed(String buttonText) {
     print("Press what " + buttonText);
@@ -67,12 +70,12 @@ class MyHomePage extends State<StatefulBuild> {
       _output = "0";
       num1 = 0.0;
       num2 = 0.0;
+      dotDectecher = 0;
       operand = "";
     } else if (buttonText == "+" ||
         buttonText == "-" ||
         buttonText == "/" ||
         buttonText == "*") {
-          
       num1 = double.parse(output);
 
       operand = buttonText;
@@ -83,6 +86,7 @@ class MyHomePage extends State<StatefulBuild> {
         print("Already conatains a decimals");
         return;
       } else {
+        dotDectecher = 2;
         _output = _output + buttonText;
       }
     } else if (buttonText == "=") {
@@ -109,10 +113,34 @@ class MyHomePage extends State<StatefulBuild> {
     }
 
     print(_output);
-
+    RenderBox outPutBoxSize = outPutBox.currentContext.findRenderObject();
     setState(() {
-      output = double.parse(_output).toStringAsFixed(2);
+      if (dotDectecher != 0) {
+        filterDot(_output);
+      }
+      // print(outPutBoxSize.size);
+      //  print(outPutBoxSize.localToGlobal(Offset.zero));
+      output = double.parse(_output).toStringAsFixed(dotDectecher);
+      if (output.length > 9) {
+        textSize = 3.0;
+      } else if (output.length > 14) {
+        textSize = 2.0;
+      } else {
+        textSize = 5.0;
+      }
     });
+  }
+
+  void filterDot(String data) {
+    print("Cheking input data " + data);
+    String Tempdata = "";
+    int tempPointer;
+    try {
+      tempPointer = data.indexOf(".");
+      Tempdata = Tempdata.substring(tempPointer, data.length);
+    } catch (e) {} finally {
+      print("After slipting : " + Tempdata);
+    }
   }
 
   Widget functionKey(int index, String name) {
@@ -163,14 +191,21 @@ class MyHomePage extends State<StatefulBuild> {
             //padding: EdgeInsets.only(bottom: 10.0),
             child: Column(
           children: <Widget>[
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                output,
-                textScaleFactor: 5.0,
+            Container(
+              // color: Colors.brown,
+              key: outPutBox,
+              height: 120,
+              child: Align(
+                // heightFactor: 10000,
+
+                alignment: Alignment.centerRight,
+                child: Text(
+                  output,
+                  textScaleFactor: textSize,
+                ),
               ),
             ),
-            Expanded(   
+            Expanded(
               child: GridView.count(
                   physics: NeverScrollableScrollPhysics(),
                   padding: EdgeInsets.only(
