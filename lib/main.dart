@@ -17,6 +17,8 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return CupertinoApp(
+      debugShowCheckedModeBanner: false,
+      // showSemanticsDebugger: true,
       title: 'Flutter Demo',
       theme: CupertinoThemeData(
         primaryColor: Colors.teal,
@@ -62,6 +64,7 @@ class MyHomePage extends State<StatefulBuild> {
   String operand = "";
   double textSize = 5.0;
   int dotDectecher = 0;
+  int tempdotDectecher = 0;
   GlobalKey outPutBox = GlobalKey();
 
   void buttonPressed(String buttonText) {
@@ -71,6 +74,7 @@ class MyHomePage extends State<StatefulBuild> {
       num1 = 0.0;
       num2 = 0.0;
       dotDectecher = 0;
+      tempdotDectecher = 0;
       operand = "";
     } else if (buttonText == "+" ||
         buttonText == "-" ||
@@ -113,10 +117,14 @@ class MyHomePage extends State<StatefulBuild> {
     }
 
     print(_output);
-    RenderBox outPutBoxSize = outPutBox.currentContext.findRenderObject();
+    _output = _output.substring(0, _output.length);
+    print("After remove a mistake  :)) " + _output);
     setState(() {
       if (dotDectecher != 0) {
-        filterDot(_output);
+        tempdotDectecher = filterDot(_output);
+        if (tempdotDectecher > 1) {
+          dotDectecher = tempdotDectecher;
+        }
       }
       // print(outPutBoxSize.size);
       //  print(outPutBoxSize.localToGlobal(Offset.zero));
@@ -131,15 +139,18 @@ class MyHomePage extends State<StatefulBuild> {
     });
   }
 
-  void filterDot(String data) {
+  int filterDot(String data) {
     print("Cheking input data " + data);
     String Tempdata = "";
     int tempPointer;
     try {
-      tempPointer = data.indexOf(".");
-      Tempdata = Tempdata.substring(tempPointer, data.length);
+      tempPointer = data.indexOf(".") + 1;
+      print("Location: " + (tempPointer + 1).toString());
+      Tempdata = data.substring(tempPointer, data.length);
     } catch (e) {} finally {
       print("After slipting : " + Tempdata);
+      print("length is : " + Tempdata.length.toString());
+      return Tempdata.length;
     }
   }
 
@@ -206,20 +217,24 @@ class MyHomePage extends State<StatefulBuild> {
               ),
             ),
             Expanded(
-              child: GridView.count(
-                  physics: NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.only(
-                    left: 10,
-                    // top: 80,
-                    //bottom: 0.0,
-                    right: 10,
-                  ),
-                  crossAxisSpacing: 9.0,
-                  mainAxisSpacing: 9.0,
-                  crossAxisCount: 4,
-                  children: List.generate(keyLayout.length - 2, (index) {
-                    return functionKey(index, keyLayout[index]);
-                  })),
+              child: Container(
+                // color: Colors.black,
+                child: GridView.count(
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.only(
+                      left: 10,
+                      // top: 80,
+                      //bottom: 0.0,
+                      right: 10,
+                    ),
+                    crossAxisSpacing: 9.0,
+                    mainAxisSpacing: 9.0,
+                    crossAxisCount: 4,
+                    // Generate 16 basic Key
+                    children: List.generate(16, (index) {
+                      return functionKey(index, keyLayout[index]);
+                    })),
+              ),
             ),
             //alignment: Alignment.bottomCenter,
             Row(
