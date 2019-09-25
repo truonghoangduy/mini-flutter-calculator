@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
     return CupertinoApp(
       debugShowCheckedModeBanner: false,
       // showSemanticsDebugger: true,
+      // showSemanticsDebugger: true,
       title: 'Flutter Demo',
       theme: CupertinoThemeData(
         primaryColor: Colors.teal,
@@ -83,20 +84,21 @@ class MyHomePage extends State<StatefulBuild> {
       num1 = double.parse(output);
 
       operand = buttonText;
-
+      // dotDectecher = 0;
       _output = "0";
     } else if (buttonText == ".") {
       if (_output.contains(".")) {
         print("Already conatains a decimals");
         return;
       } else {
-        dotDectecher = 2;
+        dotDectecher = 1;
         _output = _output + buttonText;
       }
     } else if (buttonText == "=") {
       num2 = double.parse(output);
 
       if (operand == "+") {
+        
         _output = (num1 + num2).toString();
       }
       if (operand == "-") {
@@ -164,7 +166,9 @@ class MyHomePage extends State<StatefulBuild> {
       return CupertinoButton(
           child: (Text(
             name,
-            textScaleFactor: 3.0,
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width/15
+            ),
             textAlign: TextAlign.center,
           )),
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -178,6 +182,9 @@ class MyHomePage extends State<StatefulBuild> {
       return CupertinoButton(
           child: Text(
             keyLayout[index],
+            style: TextStyle(
+              fontSize: MediaQuery.of(context).size.width/22
+            ),
           ),
           borderRadius: BorderRadius.all(Radius.circular(10)),
           color: Colors.blueGrey,
